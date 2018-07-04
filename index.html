@@ -4,16 +4,59 @@
 	<title>Sample App</title>
 	
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
-
 	<link rel="icon" type="image/png" href="dateej.png">
 
 	<style type="text/css">
 		table{
 			font-size: 12px;
 		}
+
+		.error_message{
+			font-size: 10px;
+			color: red;
+		}
 	</style>
+
+	<!--Angular JS-->
+	<style> .ng-cloak { display: none !important; } </style>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+	<script type="text/javascript">
+		var INTEGER_REGEXP = /^-?\d+$/;
+		
+		angular
+		.module('small_angular_app', [])
+		.controller('GreetingController', ['$scope', function($scope) {
+			$scope.update = function(user) {
+				console.log(user);
+			};
+		}])
+		.directive('integer', function() {
+			return {
+				require: 'ngModel',
+				link: function(scope, elm, attrs, ctrl) {
+					ctrl.$validators.integer = function(modelValue, viewValue) {
+						if (ctrl.$isEmpty(modelValue)) {
+							// consider empty models to be valid
+							return true;
+						}
+						if (INTEGER_REGEXP.test(viewValue)) {
+							// it is valid
+							return true;
+						}
+						console.log(scope);
+						// it is invalid
+						return false;
+					};
+				}
+			};
+		});
+
+
+
+
+	</script>
+	<!--Angular JS-->
 
 </head>
 <body>
@@ -44,8 +87,6 @@
         </div>
     </nav>
 
-
-
     <div class="container-fluid" style="margin-top: 20px;">
     	<div class="row">
     		<div class="col-md-4">
@@ -55,41 +96,94 @@
 				  </div>
 				  <div class="card-body">
 				    <h5 class="card-title">Creating a new account</h5>
-					<form>
-						<div class="form-group">
-							<input type="email" class="form-control form-control-sm" placeholder="Names">
+
+
+
+
+
+				    <div ng-app="small_angular_app">
+						<div ng-controller="GreetingController">
+
+
+
+
+
+							<form name="registration_form" novalidate>
+
+
+
+								<div>
+									<label>
+									Size (integer 0 - 10):
+									<input type="number" ng-model="size" name="size" min="0" max="10" integer />{{size}}</label><br />
+									<span ng-show="registration_form.size.$error.integer">The value is not a valid integer!</span>
+									<span ng-show="registration_form.size.$error.min || registration_form.size.$error.max">
+									The value must be in range 0 to 10!</span>
+								</div>
+
+
+								<div class="form-group">
+									<input name="names" type="text" class="form-control form-control-sm" placeholder="Names" ng-model="user.names" required="">
+								    <div class="ng-cloak" ng-show="registration_form.$submitted || registration_form.names.$touched">
+								      <div class="error_message" ng-show="registration_form.names.$error.required">Tell us your name.</div>
+								    </div>
+								</div>
+								<div class="form-group">
+									<div class="form-check form-check-inline">
+									  <input class="form-check-input" type="radio" name="user_gender" ng-model="user.user_gender" id="user_gender_male" value="male" required="">
+									  <label class="form-check-label" for="user_gender_male"><small>Male</small></label>
+									</div>
+									<div class="form-check form-check-inline">
+									  <input class="form-check-input" type="radio" name="user_gender" ng-model="user.user_gender" id="user_gender_female" value="female" required="">
+									  <label class="form-check-label" for="user_gender_female"><small>Female</small></label>
+									</div>
+								    <div class="ng-cloak" ng-show="registration_form.$submitted || registration_form.user_gender.$touched">
+								      <div class="error_message" ng-show="registration_form.user_gender.$error.required">How can we greet you?</div>
+								    </div>
+								</div>
+								<div class="form-group">
+									<input name="user_email" ng-model="user.user_email" type="text" class="form-control form-control-sm" placeholder="Email" required="">
+								    <div class="ng-cloak" ng-show="registration_form.$submitted || registration_form.user_email.$touched">
+								      <div class="error_message" ng-show="registration_form.user_email.$error.required">Please input your email.</div>
+								    </div>
+								</div>
+								<div class="form-group form-check">
+									<input name="user_password_needed" ng-model="user.user_password_needed" type="checkbox" class="form-check-input form-control-sm">
+									<label class="form-check-label" style="position: relative; top: -3px;"><small>Password needed</small></label>
+								</div>
+								<div class="form-group">
+									<input name="user_password" ng-model="user.user_password" type="password" class="form-control form-control-sm" placeholder="Password" ng-required="user.user_password_needed">
+								    <div class="ng-cloak" ng-show="registration_form.$submitted || registration_form.user_password.$touched">
+								      <div class="error_message" ng-show="registration_form.user_password.$error.required">You need a password to access your account.</div>
+								    </div>
+								</div>
+								<div class="form-group">
+									<input name="user_password_confirmation" ng-model="user.user_password_confirmation" type="password" class="form-control form-control-sm" placeholder="Confirm Password" ng-required="user.user_password_needed">
+								    <div class="ng-cloak" ng-show="registration_form.$submitted || registration_form.user_password_confirmation.$touched">
+								      <div class="error_message" ng-show="registration_form.user_password_confirmation.$error.required">Please confirm your password.</div>
+								    </div>
+								</div>
+								<div class="custom-file">
+									<input name="user_picture" ng-model="user.user_picture" type="file" class="custom-file-input" id="customFile" required="">
+									<label class="custom-file-label form-control-sm" for="customFile">Choose file</label>
+								    <div class="ng-cloak" ng-show="registration_form.$submitted || registration_form.user_picture.$touched">
+								      <div class="error_message" ng-show="registration_form.user_picture.$error.required">Please upload a profile picture.</div>
+								    </div>
+								</div>
+								<br>
+								<br>
+								<button type="submit" class="btn btn-primary float-right" ng-click="update(user)">Add</button>
+
+							</form>
 						</div>
-						<div class="form-group">
-							<div class="form-check form-check-inline">
-							  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-							  <label class="form-check-label" for="inlineRadio1"><small>Male</small></label>
-							</div>
-							<div class="form-check form-check-inline">
-							  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-							  <label class="form-check-label" for="inlineRadio2"><small>Female</small></label>
-							</div>
-						</div>
-						<div class="form-group">
-							<input type="email" class="form-control form-control-sm" placeholder="Email">
-						</div>
-						<div class="form-group form-check">
-							<input type="checkbox" class="form-check-input form-control-sm" id="exampleCheck1">
-							<label class="form-check-label" style="position: relative; top: -3px;"><small>Password needed</small></label>
-						</div>
-						<div class="form-group">
-							<input type="password" class="form-control form-control-sm" placeholder="Password">
-						</div>
-						<div class="form-group">
-							<input type="password" class="form-control form-control-sm" placeholder="Confirm Password">
-						</div>
-						<div class="custom-file">
-							<input type="file" class="custom-file-input" id="customFile">
-							<label class="custom-file-label form-control-sm" for="customFile">Choose file</label>
-						</div>
-						<br>
-						<br>
-						<button type="submit" class="btn btn-primary float-right">Add</button>
-					</form>
+				    </div>
+
+
+
+
+
+				
+					
 				  </div>
 				</div>
 				<br>
@@ -263,6 +357,10 @@
 	<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
 	<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 	<!--Meteor-->
+
+
+
+
 
 	<!--Datatables & jQuery-->
 	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
