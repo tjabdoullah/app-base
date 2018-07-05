@@ -109,19 +109,6 @@
 
 
 							<form name="registration_form" novalidate>
-
-
-
-								<div>
-									<label>
-									Size (integer 0 - 10):
-									<input type="number" ng-model="size" name="size" min="0" max="10" integer />{{size}}</label><br />
-									<span ng-show="registration_form.size.$error.integer">The value is not a valid integer!</span>
-									<span ng-show="registration_form.size.$error.min || registration_form.size.$error.max">
-									The value must be in range 0 to 10!</span>
-								</div>
-
-
 								<div class="form-group">
 									<input name="names" type="text" class="form-control form-control-sm" placeholder="Names" ng-model="user.names" required="">
 								    <div class="ng-cloak" ng-show="registration_form.$submitted || registration_form.names.$touched">
@@ -164,7 +151,7 @@
 								    </div>
 								</div>
 								<div class="custom-file">
-									<input name="user_picture" ng-model="user.user_picture" type="file" class="custom-file-input" id="customFile" required="">
+									<input name="user_picture" ng-model="user.user_picture" type="file" class="custom-file-input" id="customFile">
 									<label class="custom-file-label form-control-sm" for="customFile">Choose file</label>
 								    <div class="ng-cloak" ng-show="registration_form.$submitted || registration_form.user_picture.$touched">
 								      <div class="error_message" ng-show="registration_form.user_picture.$error.required">Please upload a profile picture.</div>
